@@ -1,0 +1,179 @@
+:root {
+  --ink: #07060f;
+  --paper: #f3f1ff;
+  --accent: #5ff5e2;
+  --accent2: #ffd35c;
+  --gold: #ffd35c;
+  --clover: #43e07a;
+  --font-display: 'Unbounded', 'Trebuchet MS', system-ui, sans-serif;
+  --font-ui: 'Figtree', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-ui);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent2); outline-offset: 3px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.stage { position: fixed; inset: 0; touch-action: manipulation; }
+.stage canvas { display: block; }
+
+/* ---------- top strip ---------- */
+.hud-top {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 5;
+  padding: calc(12px + env(safe-area-inset-top)) 16px 0;
+  pointer-events: none;
+}
+.nowplaying { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.np-title {
+  font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 0.02em;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.7);
+}
+.pill {
+  padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 700;
+  background: var(--accent); color: #06121a;
+}
+.lead { font-size: 13px; opacity: 0.85; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8); }
+
+.diag {
+  margin-left: 12px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
+  background: rgba(255, 120, 90, 0.2); border: 1px solid rgba(255, 120, 90, 0.6); color: #ffb9a8;
+  pointer-events: auto; cursor: help;
+}
+.linkbtn {
+  width: 100%; text-align: left; padding: 0; border: 0; background: none; font-size: 13px;
+  color: var(--accent); text-decoration: underline; text-underline-offset: 3px;
+}
+.linkbtn:disabled { opacity: 0.6; cursor: progress; }
+.hud-top { display: flex; align-items: center; flex-wrap: wrap; }
+
+/* ---------- toasts ---------- */
+.toasts {
+  position: fixed; top: calc(52px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
+  z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none;
+}
+.toast {
+  display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px;
+  background: rgba(10, 8, 20, 0.82); border: 1px solid var(--gold); color: var(--gold);
+  font-weight: 700; font-size: 15px; animation: toast-in 0.28s ease-out;
+}
+.toast .clover { color: var(--clover); }
+.toast.jackpot { background: var(--gold); color: #3a2400; font-family: var(--font-display); font-size: 16px; }
+.toast.jackpot .clover { color: #1a6b36; }
+@keyframes toast-in { from { transform: translateY(-10px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ---------- luck gauge ---------- */
+.luck {
+  position: fixed; right: 14px; top: 50%; transform: translateY(-58%); z-index: 5;
+  display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--clover);
+  pointer-events: none;
+}
+.luck-bar {
+  width: 12px; height: min(34vh, 260px); border-radius: 8px; overflow: hidden; position: relative;
+  background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);
+}
+.luck-fill {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to top, var(--clover), var(--gold));
+  transition: height 0.5s ease-out;
+}
+.luck-num { font-family: var(--font-display); font-size: 12px; color: var(--paper); text-shadow: 0 1px 6px #000; }
+
+/* ---------- bottom deck ---------- */
+.deck {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  padding: 10px 16px calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, rgba(4, 3, 10, 0.96) 0%, rgba(4, 3, 10, 0.88) 70%, rgba(4, 3, 10, 0));
+}
+.lyrics { min-height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; text-align: center; }
+.lyric-line {
+  margin: 0; font-family: var(--font-display); font-weight: 700; line-height: 1.2;
+  font-size: clamp(17px, 3.2vw, 36px); letter-spacing: -0.01em; max-width: 26ch;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9); animation: lyric-in 0.22s ease-out;
+}
+.bonus-line {
+  margin: 0; display: flex; align-items: center; gap: 8px; color: var(--gold); font-weight: 700;
+  font-size: clamp(14px, 2vw, 20px); animation: lyric-in 0.22s ease-out;
+}
+.bonus-line .clover { color: var(--clover); flex: none; }
+@keyframes lyric-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.controls { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+.transport { display: flex; align-items: center; gap: 12px; flex: none; flex-wrap: wrap; max-width: 250px; }
+.play {
+  width: 48px; height: 48px; border-radius: 50%; border: 0; display: grid; place-items: center;
+  background: var(--accent); color: #06121a; flex: none;
+}
+.play:hover { filter: brightness(1.1); }
+.vol input { width: 96px; accent-color: var(--accent); }
+.check { display: flex; align-items: center; gap: 6px; font-size: 13px; opacity: 0.85; width: 100%; }
+.check input { accent-color: var(--accent); }
+
+.setlist {
+  list-style: none; margin: 0; padding: 2px; display: flex; gap: 10px; flex: 1; min-width: 0;
+  overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin;
+}
+.setlist li { flex: 1 0 200px; scroll-snap-align: start; }
+.ticket {
+  width: 100%; display: flex; align-items: stretch; text-align: left; padding: 0; overflow: hidden;
+  border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.ticket:hover { background: rgba(255, 255, 255, 0.09); }
+.stub {
+  display: grid; place-items: center; width: 40px; flex: none; font-family: var(--font-display); font-weight: 700;
+  font-size: 15px; border-right: 2px dashed rgba(255, 255, 255, 0.25); color: var(--t-accent);
+}
+.t-main { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; min-width: 0; }
+.t-title { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-meta { font-size: 12px; opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ticket[aria-current='true'] {
+  border-color: var(--t-accent); background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 1px var(--t-accent), 0 8px 28px -10px var(--t-accent);
+}
+
+/* ---------- entry gate ---------- */
+.gate {
+  position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px;
+  background:
+    radial-gradient(60% 50% at 20% 20%, rgba(95, 245, 226, 0.22), transparent 70%),
+    radial-gradient(50% 50% at 85% 80%, rgba(255, 211, 92, 0.16), transparent 70%),
+    rgba(7, 6, 15, 0.94);
+}
+.gate-card { max-width: 520px; }
+.gate h1 {
+  margin: 0; font-family: var(--font-display); font-weight: 700; line-height: 1.02;
+  font-size: clamp(38px, 9vw, 76px); letter-spacing: -0.03em;
+}
+.gate h1 .x { color: var(--gold); }
+.gate-sub { margin: 6px 0 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(16px, 3vw, 22px); color: var(--accent); }
+.gate-copy { margin: 22px 0 26px; font-size: 18px; line-height: 1.5; max-width: 44ch; opacity: 0.9; }
+.start {
+  padding: 16px 30px; border-radius: 14px; border: 0; font-weight: 700; font-size: 18px;
+  background: var(--gold); color: #3a2400; box-shadow: 0 10px 30px -10px var(--gold);
+}
+.start:hover { filter: brightness(1.06); }
+.gate-hint { margin: 16px 0 0; font-size: 14px; opacity: 0.65; }
+
+/* ---------- small screens ---------- */
+@media (max-width: 720px) {
+  .controls { flex-direction: column; align-items: stretch; gap: 10px; }
+  .transport { max-width: none; justify-content: space-between; flex-wrap: nowrap; }
+  .check { width: auto; font-size: 12px; }
+  .vol input { width: 80px; }
+  .luck { right: 8px; }
+  .lyrics { min-height: 64px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast, .lyric-line, .bonus-line { animation: none; }
+  .luck-fill { transition: none; }
+}
